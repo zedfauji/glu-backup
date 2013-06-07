@@ -1,0 +1,1 @@
+{"command":"cat /etc/issue","redirectStderr":false,"type":"shell","fabric":"Services","agent":"ie-sigiri1.pv.ie.nextag.com","username":"admin","id":"13d16cd3034-33fdcc5b-d94a-49f1-85f7-535feb298377","exitValue":"0","startTime":1361887178804,"completionTime":1361887180199}
