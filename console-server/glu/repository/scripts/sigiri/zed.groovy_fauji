@@ -1,0 +1,114 @@
+/*
+
+ */
+
+import org.linkedin.glu.agent.api.ShellExecException 
+import org.linkedin.glu.agent.api.ScriptExecutionException 
+import org.linkedin.glu.agent.api.ScriptExecutionCauseException
+
+class StartStop
+{
+
+def appState = "..."
+
+public void safeinstall()
+{
+ScriptExecutionCauseException ex = scriptShouldFail {
+      install()
+    }
+}
+
+public void safeconfigure()
+{
+ScriptExecutionCauseException xv = scriptShouldFail {
+      configure()
+    }
+}
+
+
+  def install = {
+    log.info "Installing..."
+    shell.exec("sh /cacheDir/glu_scripts/service_install.sh ${params.service} ${params.version} ${params.port} >> /dev/null 2>&1")
+	timers.schedule(timer: monitor, repeatFrequency: "5s")
+	appState = "installed"
+  }
+
+  def configure = {
+    log.info "Nothing to Configure as such."
+    shell.exec("sleep 5")
+	appState = "configured"
+  }
+
+  def start = {
+    log.info "Starting service"
+	shell.exec("sh /cacheDir/glu_scripts/service_start.sh ${params.service} ${params.version} ${params.port}")
+	appState = "Started"
+	log.info "current state is ${state}"
+/*	monitor()*/
+}
+
+  def stop = {
+    log.info "Stopping Service"
+	shell.exec("sh /cacheDir/glu_scripts/service_stop.sh ${params.service} ${params.port}")
+	log.info "current state is ${state}"
+	appState = "Stopped"
+  }
+
+  def unconfigure = {
+    log.info "Nothing to UnConfigure as such."
+	appState = "Unconfigured"
+  }
+
+  def uninstall = {
+    log.info "Uninstalling..."
+	shell.exec("sh /cacheDir/glu_scripts/service_uninstall.sh ${params.service} ${params.version}")
+	timers.cancel(timer: monitor)
+	appState = "Uninstalled"
+  }
+
+def monitor = {
+
+try
+{
+def currentState = stateManager.state.currentState
+def currentError = stateManager.state.error
+
+def newState = null
+def newError = null
+
+def output= shell.exec("sh /cacheDir/glu_scripts/service_monitor.sh ${params.service} ${params.port}")
+shell.waitFor(timeout: '5s', heartbeat: '10s') { duration ->
+log.info "${output}"
+log.info "Waiting for service to be down"
+log.info "step 1"
+         if(output == 'null')
+                {
+                        newState = 'stopped'
+                        newError = 'Service has been stopped. Check Log Files'
+                        log.warn "${newError} => forcing new state ${newState}"
+                }
+                else
+                {
+                        newState = 'running'
+                        log.info "Service is running"
+                }
+        if(newState)
+        {
+                stateManager.forceChangeState(newState, newError)
+              log.debug "Server Monitor: ${stateManager.state.currentState}"
+        }
+
+log.info " pid matched running "
+log.info "{pid}"
+					}
+		}
+catch(Throwable th)
+    {
+      log.warn "Exception while running serverMonitor: ${th.message}"
+      log.debug("Exception while running serverMonitor (ignored)", th)
+    }
+}
+	
+}
+
+

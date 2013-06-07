@@ -1,0 +1,145 @@
+def pid
+def port
+def service
+
+
+/**
+ * This script displays the message provided in init parameters
+ */
+import org.linkedin.glu.agent.api.ShellExecException
+import org.linkedin.glu.agent.api.ScriptExecutionException
+import org.linkedin.glu.agent.api.ScriptExecutionCauseException
+class StartStop
+{
+
+
+public void safeinstall()
+{
+ScriptExecutionCauseException ex = scriptShouldFail {
+      install()
+    }
+}
+
+public void safeconfigure()
+{
+ScriptExecutionCauseException xv = scriptShouldFail {
+      configure()
+    }
+}
+
+  def install = {
+    log.info "Installing..."
+    shell.exec("sh /cacheDir/glu_scripts/service_install.sh ${params.service} ${params.version} ${params.port}")
+    
+  }
+
+  def configure = {
+    log.info "Nothing to Configure as such."
+    timers.schedule(timer: serverMonitor,repeatFrequency: params.serverMonitorFrequency ?: '15s')
+    shell.exec("sleep 5")
+  }
+
+  def start = {
+    log.info "Starting service"
+        shell.exec("sh /cacheDir/glu_scripts/service_start.sh ${params.service} ${params.version} ${params.port}")
+        shell.waitFor(timeout: '5s', heartbeat: '250') {
+    pid = isServiceUp()
+	serverMonitor()
+    }
+  }
+
+  def stop = {
+    log.info "Stopping Service"
+        shell.exec("sh /cacheDir/glu_scripts/service_stop.sh ${params.service} ${params.port}")
+         // we wait for the process to be stopped
+      shell.waitFor(timeout: params.stopTimeout, heartbeat: '1s') { duration ->
+        log.info "Waiting for service to be down"
+        isServiceDown()
+      }
+    
+
+    pid = null
+  }
+
+  def unconfigure = {
+    log.info "Nothing to UnConfigure as such."
+    log.info "Unconfiguring..."
+
+    timers.cancel(timer: serverMonitor)
+
+    port = null
+
+    log.info "Unconfiguration complete."
+  }
+
+  def uninstall = {
+    log.info "Uninstalling..."
+        shell.exec("sh /cacheDir/glu_scripts/service_uninstall.sh ${params.service} ${params.version}")
+  }
+
+
+private Integer isServiceUp()
+  {
+    try
+    {
+      def output = shell.exec("/cacheDir/glu_scripts/service_monitor.sh ${params.service} ${params.port}")
+    def matcher = output =~ /Service running pid=([0-9]+)/
+	log.info "${matcher}"
+      if(matcher)
+        return matcher[0][1] as int
+      else
+        return null
+    }
+    catch(ShellExecException e)
+    {
+      return null
+    }
+  }
+
+private boolean isServiceDown()
+  {
+    isServiceUp() == null
+  }
+
+
+def serverMonitor = {
+    try
+    {
+    def up = isServiceUp()
+
+      def currentState = stateManager.state.currentState
+      def currentError = stateManager.state.error
+
+      def newState = null
+      def newError = null
+
+      // case when current state is running
+           
+        if( up == 'null' )
+        {
+          newState = 'stopped'
+          pid = null
+          newError = 'Server down detected. Check the log file for errors.'
+          log.warn "${newError} => forcing new state ${newState}"
+        }
+        else
+          {
+              newState = 'running' // remain running
+              log.info "All webapps are up, clearing error status."
+           }
+
+      if(newState)
+        {
+        stateManager.forceChangeState(newState, newError)
+
+      log.debug "Server Monitor: ${stateManager.state.currentState} / ${up}"
+    }
+  }
+    catch(Throwable th)
+    {
+      log.warn "Exception while running serverMonitor: ${th.message}"
+      log.debug("Exception while running serverMonitor (ignored)", th)
+    }
+  }
+}
+

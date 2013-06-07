@@ -1,0 +1,60 @@
+/**
+ * This script displays the message provided in init parameters
+ */
+class StartStop
+{
+def appState = "..."
+
+  def install = {
+    log.info "Installing..."
+    shell.exec("sh /cacheDir/glu_scripts/service_install.sh ${params.service} ${params.version} ${params.port}")
+	timers.schedule(timer: monitor, repeatFrequency: "5s")
+	appState = "installed"
+  }
+
+  def configure = {
+    log.info "Nothing to Configure as such."
+    shell.exec("sleep 5")
+	appState = "configured"
+  }
+
+  def start = {
+    log.info "Starting service"
+	shell.exec("sh /cacheDir/glu_scripts/service_start.sh ${params.service} ${params.version} ${params.port}")
+	appState = "Started"
+	log.info "current state is ${state}"
+	monitor()
+}
+
+  def stop = {
+    log.info "Stopping Service"
+	shell.exec("sh /cacheDir/glu_scripts/service_stop.sh ${params.service} ${params.port}")
+	log.info "current state is ${state}"
+	appState = "Stopped"
+  }
+
+  def unconfigure = {
+    log.info "Nothing to UnConfigure as such."
+	appState = "Unconfigured"
+  }
+
+  def uninstall = {
+    log.info "Uninstalling..."
+	shell.exec("sh /cacheDir/glu_scripts/service_uninstall.sh ${params.service} ${params.version}")
+	timers.cancel(timer: monitor)
+	appState = "Uninstalled"
+  }
+def monitor = {
+    
+    def currentState = stateManager.state
+    def exitValue = "ps -elf|grep -v grep|grep `cat /cacheDir/services/live/${params.service}/${params.port}/xcache_service_thrift.${params.port}.pid`|echo $?".execute().exitValue()
+	if ( exitValue != 0 )
+	{
+	stateMachineState.currentState =='sStopped'
+	}
+}
+    }
+	
+}
+
+

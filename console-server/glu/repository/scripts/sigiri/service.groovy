@@ -1,0 +1,52 @@
+/**
+ * This script displays the message provided in init parameters
+ */
+import org.linkedin.glu.agent.api.ScriptExecutionException
+import org.linkedin.glu.agent.api.ScriptExecutionCauseException
+class StartStop
+{
+
+
+public void safeinstall()
+{
+ScriptExecutionCauseException ex = scriptShouldFail {
+      install()
+    }
+}
+
+public void safeconfigure()
+{
+ScriptExecutionCauseException xv = scriptShouldFail {
+      configure()
+    }
+}
+
+  def install = {
+    log.info "Installing..."
+    shell.exec("sh /cacheDir/glu_scripts/service_install.sh ${params.service} ${params.version} ${params.port}")
+  }
+
+  def configure = {
+    log.info "Nothing to Configure as such."
+    shell.exec("sleep 5")
+  }
+
+  def start = {
+    log.info "Starting service"
+	shell.exec("sh /cacheDir/glu_scripts/service_start.sh ${params.service} ${params.version} ${params.port}")
+  }
+
+  def stop = {
+    log.info "Stopping Service"
+	shell.exec("sh /cacheDir/glu_scripts/service_stop.sh ${params.service} ${params.port}")
+  }
+
+  def unconfigure = {
+    log.info "Nothing to UnConfigure as such."
+  }
+
+  def uninstall = {
+    log.info "Uninstalling..."
+	shell.exec("sh /cacheDir/glu_scripts/service_uninstall.sh ${params.service} ${params.version}")
+  }
+}
