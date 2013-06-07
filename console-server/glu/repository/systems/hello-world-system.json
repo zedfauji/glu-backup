@@ -1,0 +1,64 @@
+{
+  "entries": [
+    {
+      "agent": "agent-1",
+      "initParameters": {"message": "Hello World"},
+      "metadata": {
+        "cluster": "c1",
+        "container": {"name": "m1"},
+        "product": "product1",
+        "version": "1.0.0"
+      },
+      "mountPoint": "/m1/i001",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-hello-world-4.6.2/HelloWorldScript.groovy"
+    },
+    {
+      "agent": "agent-1",
+      "initParameters": {"message": "Hello World"},
+      "metadata": {
+        "cluster": "c2",
+        "container": {"name": "m2"},
+        "product": "product2",
+        "version": "2.0.0"
+      },
+      "mountPoint": "/m2/i001",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-hello-world-4.6.2/HelloWorldScript.groovy"
+    },
+    {
+      "agent": "agent-1",
+      "initParameters": {"message": "Hello World"},
+      "metadata": {
+        "cluster": "c1",
+        "container": {"name": "m3"},
+        "product": "product1",
+        "version": "1.0.0"
+      },
+      "mountPoint": "/m3/i001",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-hello-world-4.6.2/HelloWorldScript.groovy"
+    },
+    {
+      "agent": "agent-1",
+      "initParameters": {"message": "Hello World"},
+      "metadata": {
+        "cluster": "c1",
+        "container": {"name": "m4"},
+        "product": "product2",
+        "version": "2.0.0"
+      },
+      "mountPoint": "/m4/i001",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-hello-world-4.6.2/HelloWorldScript.groovy"
+    }
+  ],
+  "fabric": "glu-dev-1",
+  "metadata": {"product": {
+    "product1": {
+      "name": "product1",
+      "version": "1.0.0"
+    },
+    "product2": {
+      "name": "product2",
+      "version": "2.0.0"
+    }
+  },
+  "name": "Hello World System Model"}
+}

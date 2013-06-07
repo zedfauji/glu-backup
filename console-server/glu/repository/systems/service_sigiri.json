@@ -1,0 +1,34 @@
+{
+  "entries": [
+    {
+      "agent": "sv-sigiri1.pv.sv.nextag.com",
+      "initParameters": {
+        "service": "tag",
+		"version": "0.0.58",
+		"port": "9001"
+      },
+      "metadata": {
+        "env": "production",
+        "service": "cache",
+		"version": "0.0.58"
+      },
+      "mountPoint": "/tag/p9001",
+      "script": "http://alp2.pv.sv.nextag.com:8080/glu/repository/scripts/shilpi/StartStop.groovy"
+    }
+  ],
+ "fabric": "Tag",
+  "id": "26213c3131217954f071c3878f48891531929259",
+  "metadata": {
+    "name": "Hello World System Model",
+    "product": {
+      "product1": {
+        "name": "product1",
+        "version": "1.0.0"
+      },
+      "product2": {
+        "name": "product2",
+        "version": "2.0.0"
+      }
+    }
+  }
+}

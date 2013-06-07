@@ -1,0 +1,103 @@
+{
+  "agentTags": {
+    "agent-1": ["osx"]
+  },
+  "entries": [
+    {
+      "agent": "agent-1",
+      "initParameters": {
+        "skeleton": "http://localhost:8080/glu/repository/tgzs/jetty-distribution-7.2.2.v20101205.tar.gz",
+        "port": 9000,
+        "webapps": [
+          {
+            "war": "http://localhost:8080/glu/repository/wars/org.linkedin.glu.samples.sample-webapp-4.6.2.war",
+            "contextPath": "/cp1",
+            "monitor": "/monitor"
+          },
+          {
+            "war": "http://localhost:8080/glu/repository/wars/org.linkedin.glu.samples.sample-webapp-4.6.2.war",
+            "contextPath": "/cp2",
+            "monitor": "/monitor"
+          }
+          ]
+      },
+      "metadata": {
+        "cluster": "c1",
+        "container": {"name": "sample"},
+        "product": "product1",
+        "version": "1.0.0"
+      },
+      "mountPoint": "/sample/i001",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-jetty-4.6.2/JettyGluScript.groovy",
+      "tags": [
+        "frontend",
+        "webapp"
+      ]
+    },
+    {
+      "agent": "agent-1",
+      "initParameters": {
+        "skeleton": "http://localhost:8080/glu/repository/tgzs/jetty-distribution-7.2.2.v20101205.tar.gz",
+        "port": 9001,
+        "webapps": [
+          {
+            "war": "http://localhost:8080/glu/repository/wars/org.linkedin.glu.samples.sample-webapp-4.6.2.war",
+            "contextPath": "/cp1",
+            "monitor": "/monitor"
+          }
+          ]
+      },
+      "metadata": {
+        "cluster": "c1",
+        "container": {"name": "sample"},
+        "product": "product1",
+        "version": "1.0.0"
+      },
+      "mountPoint": "/sample/i002",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-jetty-4.6.2/JettyGluScript.groovy",
+      "tags": [
+        "frontend",
+        "webapp"
+      ]
+    },
+    {
+      "agent": "agent-1",
+      "initParameters": {
+        "skeleton": "http://localhost:8080/glu/repository/tgzs/jetty-distribution-7.2.2.v20101205.tar.gz",
+        "port": 9002,
+        "webapps": [
+          {
+            "war": "http://localhost:8080/glu/repository/wars/org.linkedin.glu.samples.sample-webapp-4.6.2.war",
+            "contextPath": "/cp4",
+            "monitor": "/monitor"
+          }
+          ]
+      },
+      "metadata": {
+        "cluster": "c2",
+        "container": {"name": "sample"},
+        "product": "product1",
+        "version": "1.0.0"
+      },
+      "mountPoint": "/sample/i003",
+      "script": "http://localhost:8080/glu/repository/scripts/org.linkedin.glu.script-jetty-4.6.2/JettyGluScript.groovy",
+      "tags": [
+        "backend",
+        "webapp"
+      ]
+    }
+  ],
+  "fabric": "glu-dev-1",
+  "metadata": {"product": {
+    "product1": {
+      "name": "product1",
+      "version": "1.0.0"
+    },
+    "product2": {
+      "name": "product2",
+      "version": "2.0.0"
+    }
+  },
+    "name": "Tutorial System Model"
+  }
+}
